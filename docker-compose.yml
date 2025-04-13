@@ -8,6 +8,12 @@ services:
       - "8761:8761"
     networks:
       - kitchensink-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api-gateway:
     build: api-gateway
@@ -15,12 +21,19 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - service-discovery
+      service-discovery:
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
     networks:
       - kitchensink-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   mongodb:
     image: mongo:6.0
@@ -31,18 +44,32 @@ services:
       - mongodb_data:/data/db
     networks:
       - kitchensink-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   member-service:
     build: member-service
     container_name: member-service
     depends_on:
-      - service-discovery
-      - mongodb
+      service-discovery:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
     networks:
       - kitchensink-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
       
   ui:
     build: ui
@@ -50,7 +77,8 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - api-gateway
+      api-gateway:
+        condition: service_healthy
     networks:
       - kitchensink-network
 
