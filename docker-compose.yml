@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  service-discovery:
+    build: service-discovery
+    container_name: service-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - kitchensink-network
+
+  api-gateway:
+    build: api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-discovery
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    networks:
+      - kitchensink-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - kitchensink-network
+
+  member-service:
+    build: member-service
+    container_name: member-service
+    depends_on:
+      - service-discovery
+      - mongodb
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    networks:
+      - kitchensink-network
+      
+  ui:
+    build: ui
+    container_name: ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - kitchensink-network
+
+networks:
+  kitchensink-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
