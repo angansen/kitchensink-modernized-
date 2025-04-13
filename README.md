@@ -16,7 +16,7 @@ The project consists of the following components:
 
 ## Prerequisites
 
-- Java 17+
+- Java 21 (JDK 21)
 - Maven 3.8+
 - Docker and Docker Compose
 - Git
