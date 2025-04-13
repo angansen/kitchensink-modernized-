@@ -12,7 +12,7 @@ spring:
           predicates:
             - Path=/api/members/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
             - name: CircuitBreaker
               args:
                 name: memberServiceCircuitBreaker
@@ -52,3 +52,24 @@ resilience4j:
         waitDurationInOpenState: 5s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
