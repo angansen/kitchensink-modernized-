@@ -230,11 +230,3 @@ docker-compose down -v
 
 - **Circuit Breaker**: The API Gateway implements circuit breaking to prevent cascading failures
 - **Fallback**: If the Member Service is unavailable, the API Gateway returns a fallback response
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Submit a pull request
