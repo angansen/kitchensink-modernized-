@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import MemberList from './components/MemberList';
 import AddMember from './components/AddMember';
 import EditMember from './components/EditMember';
+import logo from './assets/logo.svg'; // Import the logo
 
 function App() {
   return (
@@ -10,7 +11,10 @@ function App() {
       <div className="container">
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
-            <Link to="/" className="navbar-brand">Kitchensink Microservices</Link>
+            <Link to="/" className="navbar-brand">
+              <img src={logo} alt="Kitchensink Logo" height="30" className="d-inline-block align-top me-2" />
+              Kitchensink Plus Plus
+            </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
             </button>
