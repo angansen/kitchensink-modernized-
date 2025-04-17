@@ -53,7 +53,6 @@ services:
 
   member-service:
     build: member-service
-    container_name: member-service
     depends_on:
       service-discovery:
         condition: service_healthy
